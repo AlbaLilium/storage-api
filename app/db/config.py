@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class SettingsPostgres(BaseSettings):
@@ -8,10 +8,12 @@ class SettingsPostgres(BaseSettings):
     db_user: str
     db_password: str
 
-
-    class Config:
-        secrets_dir = 'utils/secrets'
-        env_file = "utils/environments/db.env"
+    # class Config:
+    # secrets_dir = '/run/secrets/'
+    model_config = SettingsConfigDict(
+        env_file="utils/environments/db.env",
+        env_file_encoding="utf-8",
+    )
 
     @property
     def sqlalchemy_database_url(self) -> str:
@@ -19,3 +21,4 @@ class SettingsPostgres(BaseSettings):
 
 
 settings = SettingsPostgres()
+# print(f"{settings.sqlalchemy_database_url=}".upper())
