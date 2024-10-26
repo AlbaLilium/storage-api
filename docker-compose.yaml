@@ -12,8 +12,8 @@ services:
       postgres:
         condition: service_healthy
     env_file: "utils/environments/db.env"
-    secrets:
-      - db_password
+    # secrets:
+    #  - db_password
 
 
 
@@ -28,17 +28,17 @@ services:
     environment:
       POSTGRES_NAME: ${DB_NAME:-postgres}
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: db_password.txt
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres} # db_password.txt
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 30s
       timeout: 30s
       retries: 3
 
-    secrets:
-      - db_password
+    # secrets:
+    #  - db_password
 
 
-secrets:
-    db_password:
-      file: utils/secrets/db_password.txt
+# secrets:
+  #  db_password:
+   #   file: utils/secrets/db_password.txt
