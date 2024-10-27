@@ -49,7 +49,7 @@ def validate_text(text: str) -> str:
     return text
 
 
-def validate_numeric_values(cost: Decimal, amount: int)-> bool:
+def validate_numeric_values(cost: Decimal, amount: int) -> bool:
     """
 
     :param cost: int

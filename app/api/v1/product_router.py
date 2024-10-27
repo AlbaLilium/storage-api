@@ -1,12 +1,16 @@
 from fastapi import APIRouter
 
+from app.api.v1.dependecies.general_validator import validate_id
+from app.api.v1.dependecies.product_validator import validate_numeric_values
 from app.controllers.queries.product_queries import ProductOperation
-from app.data.serializers.product_serializer import (CreateProductSerializer,
-                                                     ListProductSerializer,
-                                                     ProductBase,
-                                                     UpdateProductSerializer)
+from app.data.serializers.product_serializer import (
+    CreateProductSerializer,
+    ListProductSerializer,
+    ProductBase,
+    UpdateProductSerializer,
+)
 
-product_router = APIRouter(prefix="/products")
+product_router = APIRouter(prefix="/products", tags=["product"])
 
 
 @product_router.get(path="/", response_model=ListProductSerializer)
@@ -14,9 +18,7 @@ async def get_all_products():
     """
     Get all products in database.
 
-    Returns
-    -------
-    task_list: ListProductSerializer
+    :return product_list: ListProductSerializer
     """
 
     async with ProductOperation() as db:
@@ -31,16 +33,13 @@ async def get_product(
     """
     Get product in database.
 
-    Parameters
-    ----------
-    requested_product: ProductSerializer
+    :param product_id: int
+    :raise HTTPException 400 if product_id < 0
+    :return product: ProductBase
 
-    Returns
-    -------
-    product: ProductBase
     """
     async with ProductOperation() as db:
-        return await db.get_product(product_id=product_id)
+        return await db.get_product(product_id=validate_id(id=product_id))
 
 
 @product_router.post(path="/")
@@ -48,15 +47,21 @@ async def create_new_product(
     new_product: CreateProductSerializer,
 ):
     """
+    Create and save new product in database.
 
-    Parameters
-    ----------
-    new_product: CreateProductSerializer
+    :param new_product:
+        title: str
+        description: str
+        cost: Decimal
+        amount: int
 
-    Returns
-    -------
-    new_product_id: dict[str: str]
+    :raise HTTPException 400 if
+        cost < 0,
+        amount < 0,
+        title is empty,
+        description is empty
 
+    :return new_product_id: dict[str: int]
     """
     async with ProductOperation() as db:
         new_product_id = await db.create_product(new_product=new_product)
@@ -69,16 +74,17 @@ async def delete_product(deleted_product_id: int):
     """
     Delete product in database.
 
-    Parameters
-    ----------
-    deleted_product: ProductSerializer
+    :params deleted_product_id: int
 
-    Returns
-    -------
-    response: dict[str:str]
+    :raise HTTPException 400
+        if deleted_product_id < 0
+
+    :return response: dict[str:str]
     """
     async with ProductOperation() as db:
-        response = await db.delete_product(deleted_product_id=deleted_product_id)
+        response = await db.delete_product(
+            deleted_product_id=validate_id(deleted_product_id)
+        )
 
     return response
 
@@ -88,16 +94,32 @@ async def update_product_information(
     updated_product: UpdateProductSerializer,
 ):
     """
-    Get product in database.
+    Update product in database.
 
-    Parameters
-    ----------
-    updated_product: UpdateProductSerializer)
+    :param updated_product:
+        id: int
+        title: str | None
+        description: str | None
+        cost: Decimal| None
+        amount: int| None
 
-    Returns
-    -------
-    refreshed_product: ProductBase
+    :raise HTTPException 400
+        if
+        cost < 0 and
+        amount < 0
+
+    :return: product:
+        id: int
+        title: str
+        description: str
+        cost: Decimal
+        amount: int
     """
-    async with ProductOperation() as db:
-        refreshed_product = await db.update_product(updated_product)
+    if validate_numeric_values(
+        cost=updated_product.cost,
+        amount=updated_product.amount,
+    ):
+
+        async with ProductOperation() as db:
+            refreshed_product = await db.update_product(updated_product)
     return refreshed_product
