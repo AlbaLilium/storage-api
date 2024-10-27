@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
+
+from app.api.v1.dependecies.general_validator import validate_id
+from app.api.v1.dependecies.status_validator import \
+    is_status_correct as correct_status
 
 
 class OrderBase(BaseModel):
@@ -19,6 +23,9 @@ class OrderCreateSerializer(BaseModel):
 class OrderUpdateStatusSerializer(BaseModel):
     id: int
     status: str
+
+    _validate_id_id = field_validator("id")(validate_id)
+    _validate_status_correct_status = field_validator("status")(correct_status)
 
 
 class ListOrdersSerializer(BaseModel):

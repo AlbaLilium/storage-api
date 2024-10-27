@@ -1,113 +1,44 @@
 from decimal import Decimal
-from http import HTTPStatus
 
-from fastapi import HTTPException
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
+
+from app.api.v1.dependecies.general_validator import validate_id
+from app.api.v1.dependecies.product_validator import (validate_amount,
+                                                      validate_cost,
+                                                      validate_text)
 
 
 class ProductBase(BaseModel):
-    """
-    Base Serializer for Product.
-
-     ...
-
-     Attributes
-     ----------
-      id: int
-      title: str | None
-      description: str | None
-      cost: Decimal| None
-      amount: int| None
-
-      Notes
-      ------
-       ORM reading is supported.
-    """
-
     id: int
     title: str
     description: str
     cost: Decimal
     amount: int
 
-    model_config = ConfigDict(from_attributes = True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ListProductSerializer(BaseModel):
-    """
-    Base Serializer for Product.
-
-     ...
-
-     Attributes
-     ----------
-       product_list: list[ProductBase]
-
-
-    """
-
     product_list: list[ProductBase]
 
 
 class UpdateProductSerializer(BaseModel):
-    """
-    Product serializer for updating requests.
-         ...
-
-         Attributes
-         ----------
-          id: int
-          title: str | None
-          description: str | None
-          cost: Decimal| None
-          amount: int| None
-
-    """
-
     id: int
     title: str | None
     description: str | None
     cost: Decimal | None
     amount: int | None
 
-    def validate_entity(self):
-        if self.cost < 0 or self.amount < 0:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST, detail="Incorrect data."
-            )
+    _validate_id_id = field_validator("id")(validate_id)
 
 
 class CreateProductSerializer(BaseModel):
-    """
-    Product serializer for creating requests.
-
-     ...
-
-     Attributes
-     ----------
-      title: str | None
-      description: str | None
-      cost: Decimal| None
-      amount: int| None
-
-    """
-
     title: str
     description: str
     cost: Decimal
     amount: int
 
-    def validate_entity(self):
-        details = {"numbers": "Can't be less than 0", "strings": "can't be empty"}
-        if self.cost < 0 or self.amount < 0:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST, detail=details["numbers"]
-            )
-        elif self.description:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST, detail=details["strings"]
-            )
-        elif self.title:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST, detail=details["strings"]
-            )
+    _validate_text_title = field_validator("title")(validate_text)
+    _validate_text_description = field_validator("description")(validate_text)
+    _validate_cost_cost = field_validator("cost")(validate_cost)
+    _validate_amount_amount = field_validator("amount")(validate_amount)
