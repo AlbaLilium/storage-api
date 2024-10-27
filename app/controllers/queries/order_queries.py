@@ -21,8 +21,8 @@ class OrderOperation(BaseOperation):
 
     async def get_order(self, order_id: int) -> OrderBase:
         query = await self.session.execute(select(Order).where(Order.id == order_id))
-        query.scalars().first()
-        return OrderBase.model_validate(query)
+        order = query.scalars().first()
+        return OrderBase.model_validate(order)
 
     async def get_all_orders(self) -> ListOrdersSerializer:
         query = await self.session.execute(select(Order))
