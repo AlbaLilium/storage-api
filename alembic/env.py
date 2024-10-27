@@ -8,10 +8,10 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.data.models.product_model import Product
-from app.data.models.order_model import OrderItem, Order
+from app.data.models.product import Product
+from app.data.models.order import OrderItem, Order
 from app.db.db_connection import Base, settings
 
 # this is the Alembic Config object, which provides
@@ -35,6 +35,7 @@ target_metadata = Base.metadata
 # ... etc.
 
 config.set_main_option("sqlalchemy.url", settings.sqlalchemy_database_url)
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

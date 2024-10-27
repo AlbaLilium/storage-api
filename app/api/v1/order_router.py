@@ -1,21 +1,15 @@
 from datetime import UTC, datetime
-from http.client import HTTPException
 
 from fastapi import APIRouter
 
 from app.api.v1.dependecies.general_validator import validate_id
 from app.api.v1.dependecies.product_validator import validate_amount
-from app.api.v1.dependecies.status_validator import is_status_correct
-from app.controllers.queries.order_item_queries import OrderItemOperation
-from app.controllers.queries.order_queries import OrderOperation
-from app.controllers.queries.product_queries import ProductOperation
+from app.controllers.queries.order import OrderItemOperation, OrderOperation
+from app.controllers.queries.product import ProductOperation
 from app.data.enum import OrderStatusEnum
-from app.data.serializers.order_serializer import (
-    ListOrdersSerializer,
-    OrderBase,
-    OrderCreateSerializer,
-    OrderUpdateStatusSerializer,
-)
+from app.data.serializers.order import (ListOrdersSerializer, OrderBase,
+                                        OrderCreateSerializer,
+                                        OrderUpdateStatusSerializer)
 
 order_router = APIRouter(prefix="/orders", tags=["orders"])
 

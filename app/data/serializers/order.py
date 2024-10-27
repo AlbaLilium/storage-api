@@ -32,3 +32,12 @@ class ListOrdersSerializer(BaseModel):
     order_list: list[OrderBase]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class OrderItemBase(BaseModel):
+    id: int
+    product_id: int
+    order_id: int
+    product_amount: int
+
+    model_config = ConfigDict(from_attributes=True)

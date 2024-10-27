@@ -1,12 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy import delete, select, update
 
-from app.controllers.queries.base_queries import BaseOperation
-from app.data.models.product_model import Product as ProductModel
-from app.data.serializers.product_serializer import (CreateProductSerializer,
-                                                     ListProductSerializer,
-                                                     ProductBase,
-                                                     UpdateProductSerializer)
+from app.controllers.queries.base import BaseOperation
+from app.data.models.product import Product as ProductModel
+from app.data.serializers.product import (CreateProductSerializer,
+                                          ListProductSerializer, ProductBase,
+                                          UpdateProductSerializer)
 
 
 class ProductOperation(BaseOperation):

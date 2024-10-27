@@ -2,13 +2,10 @@ from fastapi import APIRouter
 
 from app.api.v1.dependecies.general_validator import validate_id
 from app.api.v1.dependecies.product_validator import validate_numeric_values
-from app.controllers.queries.product_queries import ProductOperation
-from app.data.serializers.product_serializer import (
-    CreateProductSerializer,
-    ListProductSerializer,
-    ProductBase,
-    UpdateProductSerializer,
-)
+from app.controllers.queries.product import ProductOperation
+from app.data.serializers.product import (CreateProductSerializer,
+                                          ListProductSerializer, ProductBase,
+                                          UpdateProductSerializer)
 
 product_router = APIRouter(prefix="/products", tags=["product"])
 
