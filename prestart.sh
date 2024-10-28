@@ -1,4 +1,2 @@
-if [ ! $(find . -name 'init_database*')]; then
-    alembic revision --autogenerate -m "init database"
-fi
+# alembic revision --autogenerate -m "init database"
 alembic upgrade head
